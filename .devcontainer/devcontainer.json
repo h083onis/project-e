@@ -1,0 +1,14 @@
+{
+	"name": "flask-python3",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "python3", 
+	"workspaceFolder": "/app",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+        "vscode": {
+          "extensions": [
+            "ms-python.python"
+          ]
+        }
+    }
+}

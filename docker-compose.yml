@@ -1,0 +1,14 @@
+version: '3'
+services:
+  python3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+    - app:/app
+    ports:
+      - '5001:80'
+
+volumes:
+  app:

@@ -3,4 +3,4 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, Remote Flask!'
+    return 'Hello, Remote Flask2!'

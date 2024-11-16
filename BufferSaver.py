@@ -1,42 +1,55 @@
-import joblib
-import numpy as np
 import time
-import json
 from datetime import datetime, timedelta
+import os
+import json
 
-# モデルの読み込み
-model = joblib.load('model.pkl')
+# 本来はモデル
+def model_function(value):
+    return value * 2
+
+# バッファファイルを初期化（新しい日付での利用時）
+def initialize_buffer():
+    with open(BUFFER_FILE, 'w') as f:
+        json.dump([], f)  # 空リストで初期化
 
 # バッファファイル名
 BUFFER_FILE = 'buffer.json'
 
-# 保存する最大データ数と古いデータの削除時間
-EXPIRE_DURATION = timedelta(hours=1)  # 古いデータの削除時間（例：1時間）
+def update_buffer():
+    # 初期値
+    input_value = 1
+    current_date = datetime.now().date()  # 今日の日付
 
-# バッファにデータを追加
-def save_to_buffer(prediction):
-    timestamp = datetime.now().isoformat()
-    new_data = {"timestamp": timestamp, "prediction": prediction}
-    
-    try:
+    # 初回起動時にファイルを初期化
+    if not os.path.exists(BUFFER_FILE):
+        initialize_buffer()
+
+    while True:
+        # 現在の日付を取得
+        new_date = datetime.now().date()
+
+        # 日付が変わった場合はバッファファイルをリセット
+        if new_date != current_date:
+            current_date = new_date
+            initialize_buffer()
+
+        # 新しいデータの生成
+        timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
+        prediction = model_function(input_value)
+        new_data = {"timestamp": timestamp, "prediction": prediction}
+
+        # バッファファイルにデータを追記
         with open(BUFFER_FILE, 'r') as f:
             data = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        data = []
-    
-    # 新しいデータを追加し、古いデータを削除（現状過去１時間のデータを保持）
-    data.append(new_data)
-    data = [entry for entry in data if datetime.fromisoformat(entry["timestamp"]) >= datetime.now() - EXPIRE_DURATION]
-    
-    with open(BUFFER_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
 
-def update_buffer():
-    while True:
-        ble_data = np.random.rand(1, 256)  # ダミーの256次元データ
-        prediction = model.predict(ble_data)  # 予測を実行
-        save_to_buffer(prediction.tolist())  # JSONファイルに保存
-        time.sleep(60)  # 1分ごとに更新
+        data.append(new_data)
+
+        with open(BUFFER_FILE, 'w') as f:
+            json.dump(data, f, indent=4)
+
+        # 次の処理まで1分待機
+        time.sleep(60)
+
 
 if __name__ == '__main__':
     update_buffer()

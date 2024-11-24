@@ -5,7 +5,7 @@ import json
 app = Flask(__name__)
 
 # ファイルパス
-BUFFER_FILE = "buffer.json"
+BUFFER_FILE = "/app/shared/Buffer.json"
 
 # バッファの内容を返すAPIエンドポイント
 # http://127.0.0.1:5001/prediction

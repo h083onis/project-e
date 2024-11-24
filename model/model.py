@@ -13,7 +13,7 @@ def initialize_buffer():
         json.dump([], f)  # 空リストで初期化
 
 # バッファファイル名
-BUFFER_FILE = 'buffer.json'
+BUFFER_FILE = '/app/shared/Buffer.json'
 
 def update_buffer():
     # 初期値

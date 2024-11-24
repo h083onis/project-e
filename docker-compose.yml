@@ -1,14 +1,23 @@
 version: '3'
 services:
-  python3:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     tty: true
     volumes:
-    - ./:/app
+      - shared_data:/app/shared
     ports:
       - '5001:80'
 
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - shared_data:/app/shared
+
 volumes:
-  app:
+  shared_data:
+    driver: local

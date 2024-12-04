@@ -1,5 +1,17 @@
 version: '3'
 services:
+  react-app:
+      build: .
+      ports:
+        - "3000:3000"
+      volumes:
+        - .:/app
+        - /app/node_modules
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+      depends_on:
+        - backend
+
   backend:
     build:
       context: ./backend
@@ -17,7 +29,26 @@ services:
     tty: true
     volumes:
       - shared_data:/app/shared
+    depends_on:
+      - mysql
+
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ble_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/mysql-init:/docker-entrypoint-initdb.d
 
 volumes:
   shared_data:
+    driver: local
+  mysql_data:
     driver: local

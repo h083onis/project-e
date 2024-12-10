@@ -6,19 +6,18 @@ import pymysql
 
 def get_ble_data():
     connection = pymysql.connect(
-        host="workspace-mysql-1",
-        user="user",
-        password="password",
+        host="project-e-backend-mysql-1",
+        user="project-e",
+        password="project-e",
         database="ble_db",
-        port=3307
+        port=3306
     )
     try:
         with connection.cursor() as cursor:
-            cursor.execute("show databases;")
-            #cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
+            cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             results = cursor.fetchall()
-            if result:
-                timestamp, other_data = result
+            if results:
+                id, timestamp, other_data = results[0]
                 other_data = json.loads(other_data)  # JSON文字列をPythonのリストに変換
                 return {"timestamp": timestamp, "other_data": other_data}
             return None
@@ -27,7 +26,7 @@ def get_ble_data():
 
 # 本来はモデル
 def model_function(data):
-    return value * 2
+    return data * 2
 
 # バッファファイルを初期化（新しい日付での利用時）
 def initialize_buffer():
@@ -57,7 +56,7 @@ def update_buffer():
 
         # 新しいデータの生成
         timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
-        data = get_ble_data()
+        ble_data = get_ble_data()
 
          # BLEデータが取得できた場合
         if ble_data:

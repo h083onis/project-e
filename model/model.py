@@ -7,15 +7,13 @@ import mysql.connector
 def get_ble_data():
     connection = mysql.connector.connect(
         host="mysql",
-        user="user",
-        password="password",
+        user="project-e",
+        password="project-e",
         database="ble_db",
-        port=3306
         port=3306
     )
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             results = cursor.fetchall()
             if results:

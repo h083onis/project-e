@@ -1,11 +1,12 @@
 version: '3'
 services:
   react-app:
-      build: .
+      build:
+        context: ./frontend
       ports:
         - "3000:3000"
       volumes:
-        - .:/app
+        - ./frontend:/app
         - /app/node_modules
       environment:
         - CHOKIDAR_USEPOLLING=true
@@ -26,26 +27,34 @@ services:
     build:
       context: ./model
       dockerfile: Dockerfile
-    tty: true
     volumes:
       - shared_data:/app/shared
+    tty: true
     depends_on:
       - mysql
+    networks:
+      - db_model
 
   mysql:
     build:
       context: ./mysql
       dockerfile: Dockerfile
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: project-e
       MYSQL_DATABASE: ble_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_USER: project-e
+      MYSQL_PASSWORD: project-e
     ports:
       - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - db_model
+
+networks:
+  db_model:
+    driver: bridge
 
 volumes:
   shared_data:

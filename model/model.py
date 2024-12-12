@@ -11,9 +11,11 @@ def get_ble_data():
         password="password",
         database="ble_db",
         port=3306
+        port=3306
     )
     try:
         with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             results = cursor.fetchall()
             if results:
@@ -56,7 +58,7 @@ def update_buffer():
 
         # 新しいデータの生成
         timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
-        data = get_ble_data()
+        ble_data = get_ble_data()
 
         timestamp = datetime.now()
         prediction = model_function(data)

@@ -2,23 +2,22 @@ import time
 from datetime import datetime, timedelta
 import os
 import json
-import pymysql
+import mysql.connector
 
 def get_ble_data():
-    connection = pymysql.connect(
-        host="workspace-mysql-1",
+    connection = mysql.connector.connect(
+        host="mysql",
         user="user",
         password="password",
         database="ble_db",
-        port=3307
+        port=3306
     )
     try:
         with connection.cursor() as cursor:
-            cursor.execute("show databases;")
-            #cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
+            cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
             results = cursor.fetchall()
-            if result:
-                timestamp, other_data = result
+            if results:
+                _, timestamp, other_data = results[0]
                 other_data = json.loads(other_data)  # JSON文字列をPythonのリストに変換
                 return {"timestamp": timestamp, "other_data": other_data}
             return None
@@ -27,7 +26,7 @@ def get_ble_data():
 
 # 本来はモデル
 def model_function(data):
-    return value * 2
+    return 2
 
 # バッファファイルを初期化（新しい日付での利用時）
 def initialize_buffer():
@@ -59,20 +58,19 @@ def update_buffer():
         timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
         data = get_ble_data()
 
-         # BLEデータが取得できた場合
-        if ble_data:
-            timestamp, data = ble_data[0][1], ble_data[0][2]
-            prediction = model_function(data)
-            new_data = {"timestamp": timestamp, "prediction": prediction}
+        timestamp = datetime.now()
+        prediction = model_function(data)
+        new_data = {"timestamp": timestamp, "prediction": prediction}
 
-            # バッファファイルにデータを追記
-            with open(BUFFER_FILE, 'r') as f:
-                data = json.load(f)
+        print(new_data)
+        """ # バッファファイルにデータを追記
+        with open(BUFFER_FILE, 'r') as f:
+            data = json.load(f)
 
-            data.append(new_data)
+        data.append(new_data)
 
-            with open(BUFFER_FILE, 'w') as f:
-                json.dump(data, f, indent=4)
+        with open(BUFFER_FILE, 'w') as f:
+            json.dump(data, f, indent=4, default=str) """
 
         # 次の処理まで1分待機
         time.sleep(60)

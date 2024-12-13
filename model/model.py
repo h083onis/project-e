@@ -59,18 +59,18 @@ def update_buffer():
         ble_data = get_ble_data()
 
         timestamp = datetime.now()
-        prediction = model_function(data)
+        prediction = model_function(ble_data)
         new_data = {"timestamp": timestamp, "prediction": prediction}
 
         print(new_data)
-        """ # バッファファイルにデータを追記
+        # バッファファイルにデータを追記
         with open(BUFFER_FILE, 'r') as f:
             data = json.load(f)
 
         data.append(new_data)
 
         with open(BUFFER_FILE, 'w') as f:
-            json.dump(data, f, indent=4, default=str) """
+            json.dump(data, f, indent=4, default=str)
 
         # 次の処理まで1分待機
         time.sleep(60)

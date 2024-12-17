@@ -30,6 +30,7 @@ services:
       context: ./model
       dockerfile: Dockerfile
     volumes:
+      - ./model:/app
       - shared_data:/app/shared
     tty: true
     depends_on:

@@ -24,8 +24,8 @@ def get_ble_data():
             #仮sql 
             query = """
             SELECT * FROM ble_data
-            WHERE timestamp >= '2024-12-04 12:05:00'
-            AND timestamp < '2024-12-04 12:06:00';
+            WHERE timestamp >= '2024-11-01 11:57:00'
+            AND timestamp < '2024-11-01 11:58:00';
             """
             cursor.execute(query)  # 1分前台のデータを取得
             rows = cursor.fetchall()
@@ -52,9 +52,6 @@ def get_ble_data():
         df['timestamp'] = pd.to_datetime(df['timestamp'])
         # インデックスをタイムスタンプに設定
         df.set_index('timestamp', inplace=True)
-
-        # 1分間のデータをまとめる(現状、1分間のデータ1つしかないからコメントアウトしてます)
-        # all_data = pd.concat(new_data)
 
         return df
 

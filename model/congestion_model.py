@@ -23,11 +23,12 @@ def real_time_people_estimation(model_path):
 
             print(new_data)
             features = feature_extract.extract_features(new_data)
+            print(features)
             # 推定を行う（最新の特徴量データをモデルに入力）
             if not features.empty:
                 prediction = model.predict(features.iloc[-1:])
                 predicted_people = int(round(prediction[0]))  # 予測人数を整数に丸める
-                print(f"{pd.Timestamp.now()}: 推定人数 = {predicted_people}")
+                print(f"推定人数 = {predicted_people}")
             
             # 10秒ごとに更新
             time.sleep(10)

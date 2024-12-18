@@ -5,7 +5,7 @@ import feature_extract
 from catboost import CatBoostRegressor
 
 # リアルタイム人数推定
-def real_time_estimation(model_path):
+def real_time_estimation(model_path, current_time):
     # モデルのロード
     model = CatBoostRegressor()
     model.load_model(model_path)
@@ -13,7 +13,7 @@ def real_time_estimation(model_path):
     print("リアルタイム人数推定を開始します...")
 
     # 新しいBLEデータをシミュレート
-    new_data = get_data.get_ble_data()
+    new_data = get_data.get_ble_data(current_time)
 
     # new_dataが空の場合にエラーを返す
     if new_data.empty:

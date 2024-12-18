@@ -1,9 +1,10 @@
 import time
-from datetime import datetime, timedelta
 import os
 import json
 import mysql.connector
 import congestion_model
+import pytz
+from datetime import datetime, timedelta
 
 # バッファファイルを初期化（新しい日付での利用時）
 def initialize_buffer():
@@ -31,14 +32,16 @@ def update_buffer():
             current_date = new_date
             initialize_buffer()
 
-        # 新しいデータの生成
-        timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
-        timestamp = datetime.now()
-
+        # 日本時間取得
+        JP_time = datetime.now( pytz.timezone('Asia/Tokyo'))
+        # タイムゾーンを削除
+        JP_time_without_tz = JP_time.replace(tzinfo=None)
+        # オフセットなしで表示
+        timestamp = JP_time_without_tz.strftime('%Y-%m-%d %H:%M:%S.%f')
         # CatBoostモデルのファイルパス
         model_path = "./best_catb_model.cbm"
         # リアルタイム推定を開始
-        prediction = congestion_model.real_time_estimation(model_path)
+        prediction = congestion_model.real_time_estimation(model_path, timestamp)
         new_data = {"timestamp": timestamp, "prediction": prediction}
 
         print(new_data)

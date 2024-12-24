@@ -1,10 +1,10 @@
 import mysql.connector
-import datetime
+from datetime import datetime, timedelta
 import pytz
 import json
 import pandas as pd
 
-def get_ble_data():
+def get_ble_data(current_time):
     connection = mysql.connector.connect(
         host="mysql",
         user="project-e",
@@ -14,11 +14,17 @@ def get_ble_data():
     )
     try:
         with connection.cursor(dictionary=True) as cursor:
+            # 秒以下を0にする
+            current_time = datetime.strptime(current_time, '%Y-%m-%d %H:%M:%S.%f')
+            modified_time = current_time.replace(second=0, microsecond=0)
+            minus_one_minute = modified_time - timedelta(minutes=1)
+            # print(modified_time)
+            # print(minus_one_minute)
             # dbから現在時刻の1分前台のデータを取得
-            # query = """
+            # query = f"""
             # SELECT * FROM ble_data
-            # WHERE timestamp >= DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', 'Asia/Tokyo'), '%Y-%m-%d %H:%i:00'), INTERVAL 1 MINUTE)
-            # AND timestamp < DATE_FORMAT(CONVERT_TZ(NOW(), 'UTC', 'Asia/Tokyo'), '%Y-%m-%d %H:%i:00');
+            # WHERE timestamp >= '{minus_one_minute}'
+            # AND timestamp < '{modified_time}';
             # """
 
             #仮sql 

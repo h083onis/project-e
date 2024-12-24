@@ -1,32 +1,10 @@
 import time
-from datetime import datetime, timedelta
 import os
 import json
 import mysql.connector
-
-def get_ble_data():
-    connection = mysql.connector.connect(
-        host="mysql",
-        user="project-e",
-        password="project-e",
-        database="ble_db",
-        port=3306
-    )
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM ble_data ORDER BY timestamp DESC LIMIT 1")  # 最新のデータを1件取得
-            results = cursor.fetchall()
-            if results:
-                _, timestamp, other_data = results[0]
-                other_data = json.loads(other_data)  # JSON文字列をPythonのリストに変換
-                return {"timestamp": timestamp, "other_data": other_data}
-            return None
-    finally:
-        connection.close()
-
-# 本来はモデル
-def model_function(data):
-    return 2
+import congestion_model
+import pytz
+from datetime import datetime, timedelta
 
 # バッファファイルを初期化（新しい日付での利用時）
 def initialize_buffer():
@@ -54,12 +32,16 @@ def update_buffer():
             current_date = new_date
             initialize_buffer()
 
-        # 新しいデータの生成
-        timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M')
-        ble_data = get_ble_data()
-
-        timestamp = datetime.now()
-        prediction = model_function(ble_data)
+        # 日本時間取得
+        JP_time = datetime.now( pytz.timezone('Asia/Tokyo'))
+        # タイムゾーンを削除
+        JP_time_without_tz = JP_time.replace(tzinfo=None)
+        # オフセットなしで表示
+        timestamp = JP_time_without_tz.strftime('%Y-%m-%d %H:%M:%S.%f')
+        # CatBoostモデルのファイルパス
+        model_path = "./best_catb_model.cbm"
+        # リアルタイム推定を開始
+        prediction = congestion_model.real_time_estimation(model_path, timestamp)
         new_data = {"timestamp": timestamp, "prediction": prediction}
 
         print(new_data)

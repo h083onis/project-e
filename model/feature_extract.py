@@ -1,31 +1,17 @@
 import pandas as pd
 
 # 特徴量を抽出する関数
-def extract_features(df, start_time=None, end_time=None):
-    """
-    任意の時間範囲に対応して特徴量を抽出する関数。
+def extract_features(df):
 
-    Parameters:
-        df (DataFrame): BLEデータフレーム（timestampがインデックス）
-        start_time (str): 開始時間 (例: '11:36:00')。デフォルトはNone。
-        end_time (str): 終了時間 (例: '11:36:59')。デフォルトはNone。
-
-    Returns:
-        DataFrame: 特徴量を1行にまとめたデータフレーム
-    """
     thresholds = [-60, -70, -80, -90, -100]
-
-    # 時間フィルタリング（指定された場合のみ）
-    if start_time and end_time:
-        df = df.between_time(start_time, end_time)
 
     # データが空なら空の特徴量を返す
     if df.empty:
         return pd.DataFrame([{
-            'unique_address_count': 0, 'total_count': 0, 'unique_ratio_Tsec': 0.0,  # 修正点
+            'unique_address_count': 0, 'total_count': 0, 'unique_ratio_Tsec': 0.0,  
             **{f'unique_address_count_over{t}': 0 for t in thresholds},
             **{f'total_count_over{t}': 0 for t in thresholds},
-            **{f'unique_ratio_Tsec_over{t}': 0.0 for t in thresholds}  # 修正点
+            **{f'unique_ratio_Tsec_over{t}': 0.0 for t in thresholds}  
         }])
 
     # 特徴量を格納する辞書
@@ -38,7 +24,7 @@ def extract_features(df, start_time=None, end_time=None):
 
     features['unique_address_count'] = unique_address_count
     features['total_count'] = total_count
-    features['unique_ratio_Tsec'] = unique_ratio  # 修正点
+    features['unique_ratio_Tsec'] = unique_ratio  
 
     # RSSI閾値ごとの計算
     for threshold in thresholds:
@@ -51,7 +37,7 @@ def extract_features(df, start_time=None, end_time=None):
         # 特徴量を辞書に追加
         features[f'unique_address_count_over{threshold}'] = unique_address_count_thr
         features[f'total_count_over{threshold}'] = total_count_thr
-        features[f'unique_ratio_Tsec_over{threshold}'] = unique_ratio_thr  # 修正点
+        features[f'unique_ratio_Tsec_over{threshold}'] = unique_ratio_thr  
 
     # 辞書を1行のデータフレームに変換
     feature_df = pd.DataFrame([features])

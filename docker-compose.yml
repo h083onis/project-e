@@ -22,18 +22,21 @@ services:
       - shared_data:/app/shared
     ports:
       - '5001:80'
+    networks:
+      - db_model_back
 
   model:
     build:
       context: ./model
       dockerfile: Dockerfile
     volumes:
+      - ./model:/app
       - shared_data:/app/shared
     tty: true
     depends_on:
       - mysql
     networks:
-      - db_model
+      - db_model_back
 
   mysql:
     build:
@@ -50,10 +53,10 @@ services:
       - mysql_data:/var/lib/mysql
       - ./mysql/mysql-init:/docker-entrypoint-initdb.d
     networks:
-      - db_model
+      - db_model_back
 
 networks:
-  db_model:
+  db_model_back:
     driver: bridge
 
 volumes:

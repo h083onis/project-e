@@ -1,38 +1,353 @@
-.App {
+/* 全体のスタイル */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #EEF5F0;
+}
+
+.container {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #EEF5F0;
+  width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* ヘッダー */
+.header {
+  width: 100%;
+  background-color: #333333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  padding: 1% 2%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  height: 130px;
+  left: 10%;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.8rem;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.update-button {
+  background-color: #ff7f50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #e66a40;
+}
+
+/* メインコンテンツ */
+.content {
+  flex: 1;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+.crowd-status {
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.crowd-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.circle {
+  width: 300px;
+  height: 300px;
+  border: 4px solid #888888;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: #FFFF;
+}
+
+.circle2 {
+  width: 270px;
+  height: 270px;
+  border: 4px solid #888888;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFFF;
+}
+
+.circle-inner {
+  width: 50px;
+  height: 50px;
+  background-color: #4caf50;
+  border-radius: 50%;
+}
+
+/* ベースコンテナ */
+.group-icon {
+  position: relative;
+  width: 300px;
+  height: 150px;
+}
+
+/* 共通の人型スタイル */
+.person {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 頭のスタイル */
+.head {
+  width: 60px;
+  height: 60px;
+  background-color: #34A853; /* 緑色 */
+  border-radius: 50%; /* 丸型 */
+}
+
+/* 胴体のスタイル */
+.body {
+  width: 105px;
+  height: 60px;
+  background-color: #34A853; /* 緑色 */
+  border-top-left-radius: 35px;
+  border-top-right-radius: 35px;
+  margin-top: 5px; /* 頭と胴体を接続 */
+}
+
+/* 真ん中の人物 */
+.center {
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2; /* 手前に表示 */
+}
+
+/* 左の人物 */
+.left {
+  top: -15px;
+  left: 25%;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 0.45;
+}
+
+.left .head {
+  width: 50px;
+  height: 50px;
+}
+
+.left .body {
+  width: 90px;
+  height: 60px;
+}
+
+/* 右の人物 */
+.right {
+  top: -15px;
+  left: 75%;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 0.45;
+}
+
+.right .head {
+  width: 50px;
+  height: 50px;
+}
+
+.right .body {
+  width: 90px;
+  height: 60px;
+}
+
+.status-text p {
+  margin: 5px 0;
+  font-size: 1.2rem;
+}
+
+/* フッター */
+.footer {
+  background-color: #ffffff;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+  color: #555555;
+  border-top: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+
+/* ボタンのスタイル */
+.Btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff7f50;
+  color: #ffffff;
+  border: none;
+  padding: 20px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transform: translateX(-30%); /* 左に30%移動 */  
+}
+
+.Btn:hover {
+  background-color: #e66a40;
+}
+
+.Btn .sign {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.Btn .sign svg {
+  fill: #ffffff;
+  transform: rotate(90deg); /* 通常時に90度回転 */
+  transition: transform 0.3s ease;
+}
+
+.Btn:hover .sign svg {
+  transform: rotate(0deg); /* ホバー時に0度（元の向き） */
+}
+
+.Btn .text {
+  font-size: 1.1rem;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.progress-ring__circle {
+  transform: rotate(-90deg); /* 進行方向を上から開始 */
+  transform-origin: 50% 50%; /* 回転の基点を中心に設定 */
+}
+
+.namesize {
+  font-size: 1px;
+  
+  font-family: HGS創英角ｺﾞｼｯｸUB;
+}
+
+.status-container {
+  display: flex;
+  gap: 40px;  /* ボックス間の間隔を設定 */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1200px;  /* コンテナの最大幅を設定 */
+}
+
+.status-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #3B3838;
+  width: 300px;  /* 各ボックスの幅を設定 */
+  height: 320px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 7px 7px 10px 3px #24004628;
+  flex: 0 0 auto;  /* フレックスボックスでの伸縮を防ぐ */
+}
+
+.status-value {
+  position: relative;
+  width: 100%;
+  height: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-value span {
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  transition: .5s ease-in-out;
+  text-align: center;
+  padding: 0 20px;  /* 長いテキストの場合の余白 */
+}
+
+.status-text {
+  font-size: 0.87rem !important;
+}
+
+.status-label {
+  background: #eee;
+  border-radius: 60% / 10%;
+  transform: translateY(5%);
+  transition: .8s ease-in-out;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-label span {
+  color: #3B3838;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.unit {
+  font-size: 0.7em !important; /* 小さくする */
+  margin-left: -10px; /* 数値との間隔を調整 */
+}
+
+
+/* レスポンシブ対応 */
+@media (max-width: 1000px) {
+  .status-container {
+    gap: 20px;
+    padding: 10px;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .status-box {
+    width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .status-container {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .status-box {
+    width: 90%;
+    max-width: 300px;
   }
 }

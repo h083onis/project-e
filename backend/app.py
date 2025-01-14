@@ -6,12 +6,42 @@ import mysql.connector
 app = Flask(__name__)
 
 # ファイルパス
-BUFFER_FILE = "/app/shared/Buffer.json"
+#BUFFER_FILE = "/app/shared/Buffer.json"
 
 # バッファの内容を返すAPIエンドポイント
 # http://127.0.0.1:5001/prediction
 @app.route('/prediction', methods=['GET'])
 def get_prediction():
+    try:
+        # データベース接続
+        connection = mysql.connector.connect(
+            host="mysql",
+            user="project-e",
+            password="project-e",
+            database="ble_db",
+            port=3306
+        )
+        cursor = connection.cursor()
+
+        # データ取得
+        sql = "SELECT id, timestamp, prediction FROM prediction_table ORDER BY timestamp DESC LIMIT 1"
+        cursor.execute(sql)
+        results = cursor.fetchone()
+
+        if results:
+            latest_data = {"timestamp": results[1], "prediction": results[2]}
+            return jsonify(latest_data)
+        else:
+            print("予測データがありません。")
+
+    except mysql.connector.Error as err:
+        print(f"エラー: {err}")
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+""" def get_prediction():
     if not os.path.exists(BUFFER_FILE):
         return jsonify({"error": "Buffer file not found"}), 404
     
@@ -23,7 +53,7 @@ def get_prediction():
     
     # 最新のデータを返す
     latest_data = data[-1]
-    return jsonify(latest_data)
+    return jsonify(latest_data) """
 
 # Raspiから送られてきたデータをDBに格納するエンドポイント
 # http://127.0.0.1:5001/insert

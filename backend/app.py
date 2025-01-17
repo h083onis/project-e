@@ -2,8 +2,10 @@ from flask import Flask, jsonify, request
 import os
 import json
 import mysql.connector
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # 全てのドメインからのリクエストを許可
 
 # ファイルパス
 #BUFFER_FILE = "/app/shared/Buffer.json"

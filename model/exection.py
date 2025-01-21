@@ -16,12 +16,14 @@ BUFFER_FILE = '/app/shared/Buffer.json'
 
 def update_buffer():
     # 初期値
-    input_value = 1
     current_date = datetime.now().date()  # 今日の日付
 
     # 初回起動時にファイルを初期化
     if not os.path.exists(BUFFER_FILE):
         initialize_buffer()
+
+    # 次の実行時刻を計算
+    next_run_time = datetime.now()
 
     while True:
         # 現在の日付を取得
@@ -33,18 +35,19 @@ def update_buffer():
             initialize_buffer()
 
         # 日本時間取得
-        JP_time = datetime.now( pytz.timezone('Asia/Tokyo'))
-        # タイムゾーンを削除
+        JP_time = datetime.now(pytz.timezone('Asia/Tokyo'))
         JP_time_without_tz = JP_time.replace(tzinfo=None)
-        # オフセットなしで表示
         timestamp = JP_time_without_tz.strftime('%Y-%m-%d %H:%M:%S.%f')
+
         # CatBoostモデルのファイルパス
         model_path = "./best_catb_model.cbm"
+        
         # リアルタイム推定を開始
         prediction = congestion_model.real_time_estimation(model_path, timestamp)
         new_data = {"timestamp": timestamp, "prediction": prediction}
 
         print(new_data)
+
         # バッファファイルにデータを追記
         with open(BUFFER_FILE, 'r') as f:
             data = json.load(f)
@@ -54,8 +57,15 @@ def update_buffer():
         with open(BUFFER_FILE, 'w') as f:
             json.dump(data, f, indent=4, default=str)
 
-        # 次の処理まで1分待機
-        time.sleep(60)
+        # 次の実行時刻を計算
+        next_run_time += timedelta(minutes=1)
+
+        # 次の実行時刻まで待機
+        now = datetime.now()
+        sleep_duration = (next_run_time - now).total_seconds()
+        if sleep_duration > 0:
+            time.sleep(sleep_duration)
+
 
 
 if __name__ == '__main__':

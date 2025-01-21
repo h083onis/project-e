@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import "./App.css";
 
 function App() {
-  const [crowdLevel, setCrowdLevel] = useState(55); // 初期値は0%
+  const [crowdLevel, setCrowdLevel] = useState(55); // 初訪問時の初期値（今は仮）
   const [animatedCrowdLevel, setAnimatedCrowdLevel] = useState(0);
-  const [prediction, setPrediction] = useState(0);
+  const [prediction] = useState(0);
   const [animatedPrediction, setAnimatedPrediction] = useState(0);
+  const [data, setData] = useState({prediction: '', timestamp: '' })
+
+
+  useEffect(() =>{
+    axios.get('http://127.0.0.1:5001/prediction')
+        .then((res) => res.data)
+        .then((data) => {
+            console.log(data)
+            setData(data);
+        })
+  }, []);
 
   const crowdStatus =
     animatedCrowdLevel <= 33
@@ -44,9 +56,8 @@ function App() {
 
   // データ更新時の処理
   const handleUpdate = () => {
-    const newCrowdLevel = Math.floor(Math.random() * 101); // 0〜100%のランダム値
+    const newCrowdLevel = Math.floor(55); // 更新時の混雑度の値（今は仮）
     setCrowdLevel(newCrowdLevel);
-    setPrediction(Math.floor(newCrowdLevel * 1.2)); // 仮の予測人数
     setAnimatedCrowdLevel(0); // アニメーション用の数値をリセット
     setAnimatedPrediction(0);
   };
@@ -166,7 +177,7 @@ function App() {
 
             <div className="status-box">
               <div className="status-value">
-                <span>{animatedPrediction}<span className="unit">人</span></span>
+                <span>{data.prediction}<span className="unit">人</span></span>
               </div>
               <div className="status-label">
                 <span>予測人数</span>
@@ -177,7 +188,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>現在時刻：{new Date().toLocaleString()}</p>
+        <p>予測時刻：{data.timestamp}</p>
       </footer>
     </div>
   );

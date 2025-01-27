@@ -34,7 +34,8 @@ services:
       - shared_data:/app/shared
     tty: true
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - db_model_back
 
@@ -49,6 +50,12 @@ services:
       MYSQL_PASSWORD: project-e
     ports:
       - '3307:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pproject-e"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql/mysql-init:/docker-entrypoint-initdb.d

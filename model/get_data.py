@@ -21,18 +21,18 @@ def get_ble_data(current_time):
             # print(modified_time)
             # print(minus_one_minute)
             # dbから現在時刻の1分前台のデータを取得
-            # query = f"""
-            # SELECT * FROM ble_data
-            # WHERE timestamp >= '{minus_one_minute}'
-            # AND timestamp < '{modified_time}';
-            # """
+            query = f"""
+            SELECT * FROM ble_data
+            WHERE timestamp >= '{minus_one_minute}'
+            AND timestamp < '{modified_time}';
+            """
 
             #仮sql 
-            query = """
-            SELECT * FROM ble_data
-            WHERE timestamp >= '2024-11-01 11:57:00'
-            AND timestamp < '2024-11-01 11:58:00';
-            """
+            # query = """
+            # SELECT * FROM ble_data
+            # WHERE timestamp >= '2024-11-01 11:57:00'
+            # AND timestamp < '2024-11-01 11:58:00';
+            # """
             cursor.execute(query)  # 1分前台のデータを取得
             rows = cursor.fetchall()
 

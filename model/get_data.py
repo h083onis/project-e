@@ -20,14 +20,14 @@ def get_ble_data(current_time):
             minus_one_minute = modified_time - timedelta(minutes=1)
             # print(modified_time)
             # print(minus_one_minute)
-            dbから現在時刻の1分前台のデータを取得
+            # dbから現在時刻の1分前台のデータを取得
             query = f"""
             SELECT * FROM ble_data
             WHERE timestamp >= '{minus_one_minute}'
             AND timestamp < '{modified_time}';
             """
 
-            # # 仮sql 
+            #仮sql 
             # query = """
             # SELECT * FROM ble_data
             # WHERE timestamp >= '2024-11-01 11:57:00'

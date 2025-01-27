@@ -5,7 +5,7 @@ import feature_extract
 from catboost import CatBoostRegressor
 
 # リアルタイム人数推定
-def real_time_estimation(model_path, current_time):
+def realtime_pred(model_path, current_time):
     # モデルのロード
     model = CatBoostRegressor()
     model.load_model(model_path)
@@ -17,7 +17,9 @@ def real_time_estimation(model_path, current_time):
 
     # new_dataが空の場合にエラーを返す
     if new_data.empty:
-        raise ValueError("スキャンしたBLEのデータがありません")
+        # raise ValueError("スキャンしたBLEのデータがありません")
+        print("スキャンしたBLEデータがありません")
+        return -1
 
     # print(new_data)
     features = feature_extract.extract_features(new_data)

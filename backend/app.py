@@ -77,7 +77,7 @@ def insert_scanned_data():
         #JSON形式の変数
         json_data = json.loads(recieve_json)
         time = json_data.get('time')
-        ble_data = json_data.get('ble_data')
+        ble_data = json_data.get('scanned_device')
         
         query = "INSERT INTO ble_data (timestamp, other_data) VALUES (%s, %s)"
         values = (time, json.dumps(ble_data))  # JSON型に変換して挿入

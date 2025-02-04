@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import axios from 'axios';
 import "./App.css";
 
 function App() {
-  const [crowdLevel, setCrowdLevel] = useState(55); // 初訪問時の初期値（今は仮）
+  const [crowdLevel, setCrowdLevel] = useState(55);
   const [animatedCrowdLevel, setAnimatedCrowdLevel] = useState(0);
   const [prediction] = useState(0);
   const [animatedPrediction, setAnimatedPrediction] = useState(0);
-  const [data, setData] = useState({prediction: '', timestamp: '' })
+  const [data, setData] = useState({prediction: '', timestamp: '' });
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5001/prediction');
+      setData(response.data);
+      // ここで混雑度の値も更新する必要があれば、バックエンドのレスポンスに
+      // 混雑度の値を含めて、以下のように設定します
+      // if (response.data.crowdLevel) {
+      //   setCrowdLevel(response.data.crowdLevel);
+      //   setAnimatedCrowdLevel(0);
+      // }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
-  useEffect(() =>{
-    axios.get('http://127.0.0.1:5001/prediction')
-        .then((res) => res.data)
-        .then((data) => {
-            console.log(data)
-            setData(data);
-        })
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const crowdStatus =
@@ -26,14 +35,12 @@ function App() {
       ? "少し混雑しています"
       : "かなり混雑しています";
 
-  // 色の計算ロジック
   const calculateColor = (level: number) => {
-    if (level <= 33) return "#34A853"; // 緑
-    if (level <= 66) return "#ee7800"; // オレンジ
-    return "#FF0000"; // 赤
+    if (level <= 33) return "#34A853";
+    if (level <= 66) return "#ee7800";
+    return "#FF0000";
   };
 
-  // 数値アニメーションの処理
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (animatedCrowdLevel < crowdLevel) {
@@ -54,12 +61,10 @@ function App() {
     return () => clearInterval(interval);
   }, [prediction]);
 
-  // データ更新時の処理
   const handleUpdate = () => {
-    const newCrowdLevel = Math.floor(55); // 更新時の混雑度の値（今は仮）
-    setCrowdLevel(newCrowdLevel);
-    setAnimatedCrowdLevel(0); // アニメーション用の数値をリセット
+    setAnimatedCrowdLevel(0);
     setAnimatedPrediction(0);
+    fetchData();
   };
 
   return (
@@ -97,61 +102,61 @@ function App() {
                   fill="none"
                   stroke={calculateColor(animatedCrowdLevel)}
                   strokeWidth="13"
-                  strokeDasharray="879" // 円周の長さ（2 * π * r）
+                  strokeDasharray="879"
                   strokeDashoffset={879 - (879 * animatedCrowdLevel) / 100}
                   style={{ transition: "stroke-dashoffset 1.5s ease, stroke 1.5s ease" }}
                 />
               </svg>
               <div className="circle2">
                 <div className="group-icon">
-                <div className="person left">
-                  <div
-                    className="head"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                  <div
-                    className="body"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                </div>
-                <div className="person center">
-                  <div
-                    className="head"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                  <div
-                    className="body"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                </div>
-                <div className="person right">
-                  <div
-                    className="head"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                  <div
-                    className="body"
-                    style={{
-                      backgroundColor: calculateColor(animatedCrowdLevel),
-                      transition: "background-color 1.5s ease",
-                    }}
-                  ></div>
-                </div>
+                  <div className="person left">
+                    <div
+                      className="head"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                    <div
+                      className="body"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                  </div>
+                  <div className="person center">
+                    <div
+                      className="head"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                    <div
+                      className="body"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                  </div>
+                  <div className="person right">
+                    <div
+                      className="head"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                    <div
+                      className="body"
+                      style={{
+                        backgroundColor: calculateColor(animatedCrowdLevel),
+                        transition: "background-color 1.5s ease",
+                      }}
+                    ></div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -8,17 +8,12 @@ function App() {
   const [prediction] = useState(0);
   const [animatedPrediction, setAnimatedPrediction] = useState(0);
   const [data, setData] = useState({prediction: '', timestamp: '' });
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const fetchData = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:5001/prediction');
       setData(response.data);
-      // ここで混雑度の値も更新する必要があれば、バックエンドのレスポンスに
-      // 混雑度の値を含めて、以下のように設定します
-      // if (response.data.crowdLevel) {
-      //   setCrowdLevel(response.data.crowdLevel);
-      //   setAnimatedCrowdLevel(0);
-      // }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -26,6 +21,14 @@ function App() {
 
   useEffect(() => {
     fetchData();
+
+    // ウィンドウサイズの変更を監視
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const crowdStatus =
@@ -67,10 +70,25 @@ function App() {
     fetchData();
   };
 
+  // 画面サイズに応じてSVGのサイズを計算
+  const calculateSvgSize = () => {
+    if (windowWidth <= 480) return 200;
+    if (windowWidth <= 768) return 250;
+    return 300;
+  };
+
+  const svgSize = calculateSvgSize();
+  const radius = svgSize * 0.47; // SVGサイズに応じて半径を調整
+
   return (
     <div className="container">
       <header className="header">
-        <img src="/logo.png" alt="PALTO-AI Logo" className="logo" />
+        <img 
+          src="/logo.png" 
+          alt="PALTO-AI Logo" 
+          className="logo" 
+          style={{ height: windowWidth <= 768 ? '80px' : '130px' }}
+        />
         <button className="Btn" onClick={handleUpdate}>
           <div className="sign">
             <svg
@@ -81,7 +99,7 @@ function App() {
             >
               <path
                 d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"
-                fill="#000000"
+                fill="#ffffff"
               />
             </svg>
           </div>
@@ -92,22 +110,35 @@ function App() {
       <main className="content">
         <div className="crowd-status">
           <div className="crowd-icon">
-            <div className="circle">
-              <svg className="progress-ring" width="300" height="300">
+            <div className="circle" style={{ width: svgSize, height: svgSize }}>
+              <svg 
+                className="progress-ring" 
+                width={svgSize} 
+                height={svgSize}
+              >
                 <circle
                   className="progress-ring__circle"
-                  cx="150"
-                  cy="150"
-                  r="140"
+                  cx={svgSize / 2}
+                  cy={svgSize / 2}
+                  r={radius}
                   fill="none"
                   stroke={calculateColor(animatedCrowdLevel)}
-                  strokeWidth="13"
-                  strokeDasharray="879"
-                  strokeDashoffset={879 - (879 * animatedCrowdLevel) / 100}
+                  strokeWidth={windowWidth <= 480 ? 10 : 13}
+                  strokeDasharray={`${2 * Math.PI * radius}`}
+                  strokeDashoffset={
+                    2 * Math.PI * radius -
+                    ((2 * Math.PI * radius) * animatedCrowdLevel) / 100
+                  }
                   style={{ transition: "stroke-dashoffset 1.5s ease, stroke 1.5s ease" }}
                 />
               </svg>
-              <div className="circle2">
+              <div 
+                className="circle2" 
+                style={{ 
+                  width: svgSize * 0.9, 
+                  height: svgSize * 0.9 
+                }}
+              >
                 <div className="group-icon">
                   <div className="person left">
                     <div
@@ -115,6 +146,8 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '40px' : '50px',
+                        height: windowWidth <= 480 ? '40px' : '50px',
                       }}
                     ></div>
                     <div
@@ -122,6 +155,7 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '70px' : '90px',
                       }}
                     ></div>
                   </div>
@@ -131,6 +165,8 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '50px' : '60px',
+                        height: windowWidth <= 480 ? '50px' : '60px',
                       }}
                     ></div>
                     <div
@@ -138,6 +174,7 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '85px' : '105px',
                       }}
                     ></div>
                   </div>
@@ -147,6 +184,8 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '40px' : '50px',
+                        height: windowWidth <= 480 ? '40px' : '50px',
                       }}
                     ></div>
                     <div
@@ -154,6 +193,7 @@ function App() {
                       style={{
                         backgroundColor: calculateColor(animatedCrowdLevel),
                         transition: "background-color 1.5s ease",
+                        width: windowWidth <= 480 ? '70px' : '90px',
                       }}
                     ></div>
                   </div>
